@@ -63,7 +63,7 @@ I choose id=9  'Kontakt Virtual Input'  output=true => I can output midi message
 and set out_id according
 
 *)
-val out_id =9;
+val out_id =6;
 
 (*
  openOutput and openInput save pointer in pointers array PM_STREAMS which is indexed on device id
@@ -84,6 +84,7 @@ val err = writeShort (getStream out_id) 0 c3;
 
 val err2 = writeShort ( getStream out_id) 0 c3';
 
+(* we need array buffer for writing block of messages to device *)
 (* filling output buffer *)
 val notes_o = [(message(0x90,60,100),0),
 	       (message(0x80,60,0),900),
@@ -103,13 +104,16 @@ val error = write (getStream out_id) notes_o' 6;
 
 (*
 don't ear expecting notes because  0 and 1000 ms timestamps for note on
-are in the past vs portTime 
+are in the past vs portTime on Suse only first note is played then
+I stop it by 
+val err2 = writeShort ( getStream out_id) 0 c3';
 *)
 
 (* look at clock *)
 val t = ptTime();
 (* => val t = 333921: int 
 1000 is legacy
+
 I have to reset the clock to 0 before playing and put a small latency to be in time.
 => write a small fun
 
@@ -117,15 +121,15 @@ I have to reset the clock to 0 before playing and put a small latency to be in t
 
 fun playo n =  ( ptStop();ptStart 1; openOutput out_id 100 2; write (getStream out_id) notes_o' n);
 
-(* play 2 notes  now 4 msg 2 on and 2 off *)
-val erO = playo 4;
-
+(* play 1 note = 2 events 1st on and  2nd off *)
+val erO = playo 2;
+(* then play 6 events *)
 val erO = playo 6;
 
-(* another solution is to add ptTime() to each timestamp of notes list 
+(* another solution for being in time is to add ptTime() to each timestamp of notes list 
 without touching clock or already opened device 
 =>
-write another small functions should help *)
+write these another small functions should help *)
 fun addPortTime_o port_time event_array =
     Array.modify (fn (msg,ts) => (msg,ts + port_time)) event_array;
 
@@ -144,17 +148,21 @@ val erpl_o = playList_o notes_o (ptTime());
 0x90 = note on et 0x80 note off (channel 1)
 60 = C4
 100 = velocity
-0 for  data4 (* this can be used for tagging *)
+0 for  data4 (* this can be used for tagging and mandatory for sysex *)
 0 = timestamp
 
 here I put 2 notes at the same time 1000 => chord
 
-the two lists are here for experiment portmidi  timing
+the two lists are here for experiment portmidi timing with timestamp
 *)
 (* bad ordered list - read portmidi doc -*)
-val notes = [(0x90,60,100,0,0),(0x80,60,0,0,980),
-	     (0x90,67,100,0,1000),(0x80,67,0,0,2000),
-	     (0x90,64,100,0,1000),(0x80,64,0,0,2000)
+val notes = [
+	     (0x90,67,100,0,1000),
+	     (0x80,67,0,0,2000),
+	     (0x90,64,100,0,1000),
+	     (0x80,64,0,0,2000),
+	     (0x90,60,100,0,0),
+	     (0x80,60,0,0,980)
 	    ];
 
 (* good *)
