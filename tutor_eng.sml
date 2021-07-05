@@ -63,7 +63,7 @@ I choose id=9  'Kontakt Virtual Input'  output=true => I can output midi message
 and set out_id according
 
 *)
-val out_id =6;
+val out_id =9;
 
 (*
  openOutput and openInput save pointer in pointers array PM_STREAMS which is indexed on device id
