@@ -1,5 +1,5 @@
 # portmidi
-portmidi for PolyML at beginning but all Portmidi functionalities are here<p>
+portmidi for PolyML at beginning but all Portmidi functionalities are at your disposal<p>
 <p> It is a play in progress, this should evolve
 <ul> please read tutor_eng.sml and execute lines step by step for getting started
 <ul> use modifier.sml to transform message from input to output (example Presonus Atom SQ )
