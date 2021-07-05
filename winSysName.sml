@@ -1,0 +1,2 @@
+ 
+fun getSysName () = "Windows"
