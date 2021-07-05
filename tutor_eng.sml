@@ -11,7 +11,6 @@ STEP BY STEP : copy/paste the following lines which endswith ';' at PolyML promp
 
 you can select by block also but you can get cacophony
 
-This library work well in interpreted mode, but when compiled there are disfunctions.
 
 *)
 
