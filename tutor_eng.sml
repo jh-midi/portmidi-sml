@@ -155,7 +155,8 @@ here I put 2 notes at the same time 1000 => chord
 
 the two lists are here for experiment portmidi timing with timestamp
 *)
-(* bad ordered list - read portmidi doc -*)
+(* bad ordered list - read portmidi doc -
+but play well on Suse *)
 val notes = [
 	     (0x90,67,100,0,1000),
 	     (0x80,67,0,0,2000),
@@ -189,7 +190,7 @@ fun play msg_array n =  ( ptStop();ptStart 1; openOutput out_id 100 5;
 			  bigWrite (getStream out_id) msg_array n);
 
 val res = play notes' 4;
-val res = play notes' 6; (* don't play msg in time  because the list is bad formed all timestamp should be ordered *)
+val res = play notes' 6; (* don't play msg in time  because the list is bad formed all timestamp should be ordered but ok with Open Suse *)
 
 val res = play notes2' 6; (* notes2 is ordered and play well *)
 
