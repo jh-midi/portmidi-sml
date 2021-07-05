@@ -188,8 +188,11 @@ I have six messages  but I can play only 4
 fun play msg_array n =  ( ptStop();ptStart 1; openOutput out_id 100 5;
 			  bigWrite (getStream out_id) msg_array n);
 
+(* don't play msg in time  because the initial list is bad formed : 
+all timestamp should be ordered 
+but it's ok with Open Suse *)
 val res = play notes' 4;
-val res = play notes' 6; (* don't play msg in time  because the list is bad formed all timestamp should be ordered but ok with Open Suse *)
+val res = play notes' 6; 
 
 val res = play notes2' 6; (* notes2 is ordered and play well *)
 
