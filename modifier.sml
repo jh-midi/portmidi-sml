@@ -27,8 +27,9 @@ qjackctl                   id=6 input=false  output=true   opened=false  interf=
 val it = (): unit
 *)
 
-id=3 > transform >  id=0
 scan_latency in microSeconds for competition
+
+transform "ATM SQ ATM SQ" "Midi Through Port-0" 100 2000
 *)
 fun transform name_in name_out velocity scan_latency =  let
     val id_in = getDeviceInputId name_in
