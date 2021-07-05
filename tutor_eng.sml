@@ -77,12 +77,12 @@ err = 0
 val err = openOutput out_id 100 2;
 
 (* first note *)
-val c3 = message (144,60,100); (* note on *)
-val c3' = message (0x80,60,0); (* note off *)
+val c4 = message (144,60,100); (* note on *)
+val c4' = message (0x80,60,0); (* note off *)
 
-val err = writeShort (getStream out_id) 0 c3;
+val err  writeShort (getStream out_id) 0 c4;
 
-val err2 = writeShort ( getStream out_id) 0 c3';
+val err2 = writeShort ( getStream out_id) 0 c4';
 
 (* we need array buffer for writing block of messages to device *)
 (* filling output buffer *)
@@ -106,7 +106,7 @@ val error = write (getStream out_id) notes_o' 6;
 don't ear expecting notes because  0 and 1000 ms timestamps for note on
 are in the past vs portTime on Suse only first note is played then
 I stop it by 
-val err2 = writeShort ( getStream out_id) 0 c3';
+val err2 = writeShort ( getStream out_id) 0 c4';
 *)
 
 (* look at clock *)
