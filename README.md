@@ -6,6 +6,6 @@
 * use modifier.sml to transform MIDI message from input to output (example Presonus Atom SQ -only one channel- )
   this is an example for using read1 and write1 added to lib interface for realtime input-output
 * portmidi libs are provided for 64bits : tested on Arch Linux, openSUSE Leap 15.3, Mac Catalina and Windows10 
-** *Note : on Ubuntu Studio, timestamp don't work.*
+* *Note : on Ubuntu Studio, timestamp don't work.*
 
 
