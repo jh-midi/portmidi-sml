@@ -69,11 +69,14 @@ fun getErrorText errnum = Pm_GetErrorText (errnum)
 (* 
 this array of stream pointers is the register for retrieving the infos for device by Id when needed :
  for open close and get portmidi  stream at one place.
-With that we can live in peace with the pointers.
+With that we can live in peace with the pointers, because we only use devices Id
  *)
 type PmStream =  Memory.voidStar ref
 				 
-val PM_STREAMS = Array.array (countDevices(), ref Memory.null )
+val stream_void = ref Memory.null
+
+		      
+val PM_STREAMS = Array.array (countDevices(), stream_void)
 
 (* PortMidiStream pointer of pointer *)
 fun getStreamPtr id = Array.sub (PM_STREAMS,id)
@@ -84,12 +87,12 @@ fun getStream id = (! (getStreamPtr id))
 fun setStreamPtr id (stream : PmStream) = Array.update (PM_STREAMS,id,stream)
 
 (*****************************************************)		   
-(*  pmClose( midiOutPtr); original *)
-fun pmClose pmStream = Pm_Close pmStream
+(*  pmClose pointer *)
+fun pmClose streamPtr = Pm_Close streamPtr
 
 (* for use with openOutput en openInput 
 close stream and set it to *void  *)
-fun close id = (pmClose ( getStream id ); setStreamPtr id (ref Memory.null);true)
+fun close id = (pmClose ( getStream id ); setStreamPtr id stream_void;true)
     
 
 fun listDevices () = let
@@ -139,7 +142,12 @@ fun getDeviceOutputId name = List.hd (getDeviceId name #output)
 solution to help to retrieve already opened stream 
 if it is already opened then reinit  *)
 
-(* open stream and if it is already open => close it and reinit *)			     
+(* 
+1 st version open stream and if it is already open => close it and reinit
+but I choose to verify if its latency and buffer size is the same
+as required then conserve and use it
+TODO
+ *)			     
 fun openOutput id buffer_size latency = let 
     val stream = getStreamPtr id
     val opened = #opened (getDeviceInfo id)
@@ -156,11 +164,11 @@ end
 
 val c3 = message (0x90, 60, 100);
 openOutput 4 100 0; (* latence = 0 *)
-writeShort (getStream 4) 0 note;
+writeShort  4 0 note;
 
 (*  note-off *)
 val c3' = message (0x80, 60, 0);
-writeShort (getStream 4) 0 c3';
+writeShort  4 0 c3';
 
 
 *)
@@ -183,16 +191,16 @@ openInput 2 100;
 val buf2 =  bufferNew 4; (* 2 notes *)
 => val buf2 = fromList[(0, 0), (0, 0), (0, 0), (0, 0)]: (int * int) array 
 
-read (getStream 2) buf2 4;
+read  2 buf2 4;
 => val it = 4: int
 buf2;
 => val it = fromList[(3933328, 4302877), (1152, 4302992), (2361232, 4303411),
       (1920, 4303518)]: (int * int) array
 
-poll (getStream 2); 
+poll  2; 
 => true
 
-read (getStream 2) buf2 4;
+read  2 buf2 4;
 => 2
 buf2;
 => val it = fromList[(6686352, 4303808), (1664, 4303901), (2361232, 4303411),
@@ -210,14 +218,14 @@ fun message (status, data1, data2) =
     )
 
 (* 
-writeShort ( getStream 4) 0  ( message (0x80, 60, 0) );
+writeShort  4 0  ( message (0x80, 60, 0) );
  *)
-fun writeShort midiOut  when  msg  =  Pm_WriteShort (midiOut,when, msg)
+fun writeShort out_id  when  msg  =  Pm_WriteShort (getStream out_id,when, msg)
  
 
 (* 
 val syx = createSysex "F0 00 21 1D 01 01 1F F7";
-writeSysex (getStream 4) 0 syx;
+writeSysex 4 0 syx;
  *)
 fun createSysex text = let
     val ltext = String.tokens Char.isSpace text
@@ -227,7 +235,7 @@ in
 end
 
 			
-fun writeSysex midiOut when sysex = Pm_WriteSysEx (midiOut,when,sysex)
+fun writeSysex id_out when sysex = Pm_WriteSysEx (getStream id_out,when,sysex)
 
 fun messageStatus msg = IntInf.andb(msg,0xFF)
 fun messageData1 msg = IntInf.andb(IntInf.~>>(msg,0w8),0xFF)
@@ -236,9 +244,9 @@ fun messageData2 msg = IntInf.andb(IntInf.~>>(msg,0w16),0xFF)
 fun messageType msg =  IntInf.andb(msg,0xF0)
 
 (*
-  poll (getStream 2);
+  poll  2;
 *)
-fun poll stream = Pm_Poll stream = 1
+fun poll id_in = Pm_Poll (getStream id_in) = 1
 
 type PmEvent = {
     message : int,
@@ -258,15 +266,15 @@ fun bufferSet buffer index  (ev : Event) =  Array.update (buffer,index,ev)
 (*
 val notes = Array.array (2, ( message(0x90,60,100),0 ));
 val _ = bufferSet notes 1 ( message(0x80,60,0),1000 ) ;
-val err = write (getStream 4),notes,2);
+val err = write  4 notes 2;
 *)
 		     
 (* Pm_Write( PortMidiStream *stream, PmEvent *buffer, long length ); *)
-fun write stream buffer len = Pm_Write (stream,buffer,len)
+fun write id_out buffer len = Pm_Write (getStream id_out ,buffer,len)
 
-fun read stream buffer len = pm_Read (stream, buffer, len)
+fun read id_in buffer len = pm_Read (getStream id_in, buffer, len)
 
-fun setFilter (midiStreamPtr, filter) = Pm_SetFilter (midiStreamPtr,filter)
+fun setFilter (id_in, filter) = Pm_SetFilter (getStream id_in,filter)
 
 (* logior list *)
 fun logior list_int =
@@ -300,13 +308,13 @@ val filt_systemcommon = logior [filt_mtc, filt_song_position, filt_song_select, 
 (* 16 bits mask *)
 fun pmChannel channel = Word.toInt ( Word.<< (0wx1,Word.fromInt channel))
 (* 
-setChannelMask (getStream 4, pmChannel 0);
+setChannelMask  (4, pmChannel 0);
 
 " Note that channels are numbered 0 to 15 (not 1 to 16). Most 
     synthesizer and interfaces number channels starting at 1, but
     PortMidi numbers channels starting at 0."
 *)
-fun setChannelMask (stream, mask) =  Pm_SetChannelMask (stream, mask)
+fun setChannelMask (id_in, mask) =  Pm_SetChannelMask (getStream id_in, mask)
 
 						    
 (* portTime start *)
@@ -336,20 +344,20 @@ fun bigBufferNew taille = Array.array(taille, (0,0,0,0,0))
 
 fun bigBufferSet big_buffer index  (big_ev : Bevent) =  Array.update (big_buffer,index,big_ev) 
 
-fun bigRead stream big_buffer len = big_Read (stream, big_buffer, len)
+fun bigRead id_in big_buffer len = big_Read (getStream id_in, big_buffer, len)
 
-fun bigWrite stream big_buffer len = big_Write (stream,big_buffer,len)
+fun bigWrite id_out big_buffer len = big_Write (getStream id_out,big_buffer,len)
 
 (*
 val buf1 = ref (0,0,0,0,0);
-val err = read1 (getStream 2) buf1 ;
+val err = read1 2 buf1 ;
 *)
-fun read1 stream buffer1 =  pm_Read1 (stream, buffer1, 1)
+fun read1 id_in buffer1 =  pm_Read1 (getStream id_in, buffer1, 1)
 
 (*
-write1 (getStream 4) (0x80,60,120,0,100);
+write1  4 (0x80,60,120,0,100);
 *)
-fun write1 stream buffer1 = pm_Write1 (stream,buffer1, 1)
+fun write1 id_out buffer1 = pm_Write1 (getStream id_out,buffer1, 1)
 				      
 end
 

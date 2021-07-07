@@ -57,18 +57,35 @@ ATM SQ                     id=7 input=false  output=true   opened=false  interf=
 ATM SQ Control             id=8 input=false  output=true   opened=false  interf=CoreMIDI
 Kontakt Virtual Input      id=9 input=false  output=true   opened=false  interf=CoreMIDI
 ----
- 
-I choose id=9  'Kontakt Virtual Input'  output=true => I can output midi messages
+ here on Linux :
+______
+Midi Through Port-0        id=0 input=false  output=true   opened=true   interf=ALSA
+Midi Through Port-0        id=1 input=true   output=false  opened=false  interf=ALSA
+ATM SQ ATM SQ              id=2 input=false  output=true   opened=false  interf=ALSA
+ATM SQ ATM SQ              id=3 input=true   output=false  opened=false  interf=ALSA
+ATM SQ ATM SQ Control      id=4 input=false  output=true   opened=false  interf=ALSA
+ATM SQ ATM SQ Control      id=5 input=true   output=false  opened=false  interf=ALSA
+val it = (): unit
+
+I choose id=0  'Midi Through Port-0'  output=true => I can output midi messages
 and set out_id according
+previously I have connected this port to Ardour instrument vst3 >  
+Surge (fantastic synth with microtonal possibilities)
+
+https://surge-synthesizer.github.io
 
 *)
-val out_id =9;
+val out_id =0;
 
 (*
+Implementation :
  openOutput and openInput save pointer in pointers array PM_STREAMS which is indexed on device id
-and after we can get this pointer with :  (getStream out_id)
+and after we can get this pointer with :  (getStream out_id) see "portmidi.sml"
 
-- usage : openOutput id  buffer_size latency
+Note : pointers are transparents for using this interface with that, 
+as we can only use device Id 
+
+- usage : openOutput devId  buffer_size latency
   *)
 (* open out Kontakt 
 err = 0 
@@ -79,9 +96,9 @@ val err = openOutput out_id 100 2;
 val c4 = message (144,60,100); (* note on *)
 val c4' = message (0x80,60,0); (* note off *)
 
-val err  writeShort (getStream out_id) 0 c4;
+val err = writeShort out_id 0 c4;
 
-val err2 = writeShort ( getStream out_id) 0 c4';
+val err2 = writeShort out_id 0 c4';
 
 (* we need array buffer for writing block of messages to device *)
 (* filling output buffer *)
@@ -99,15 +116,15 @@ val notes_o' = Array.fromList notes_o;
 val err = openOutput out_id 100 2;
 
 (* write buffer *)
-val error = write (getStream out_id) notes_o' 6;
+val error = write out_id notes_o' 6;
 
 (*
 don't ear expecting notes because  0 and 1000 ms timestamps for note on
 are in the past vs portTime on Suse only first note is played then
 I stop it by 
-val err2 = writeShort ( getStream out_id) 0 c4';
+val err2 = writeShort 0 0 c4';
 *)
-
+val err2 = writeShort 0 0 c4';
 (* look at clock *)
 val t = ptTime();
 (* => val t = 333921: int 
@@ -118,7 +135,7 @@ I have to reset the clock to 0 before playing and put a small latency to be in t
 
 *)
 
-fun playo n =  ( ptStop();ptStart 1; openOutput out_id 100 2; write (getStream out_id) notes_o' n);
+fun playo n =  ( ptStop();ptStart 1; openOutput out_id 100 2; write out_id notes_o' n);
 
 (* play 1 note = 2 events 1st on and  2nd off *)
 val erO = playo 2;
@@ -137,7 +154,7 @@ fun playList_o notes_list clock = let
     val  notes_array = Array.fromList notes_list
     val modified = addPortTime_o clock notes_array
 in
-    write (getStream out_id ) notes_array 6
+    write out_id  notes_array 6
 end;
 
 val erpl_o = playList_o notes_o (ptTime());
@@ -154,7 +171,7 @@ here I put 2 notes at the same time 1000 => chord
 
 the two lists are here for experiment portmidi timing with timestamp
 *)
-(* bad ordered list - read portmidi doc -
+(* bad timestamp ordered list - 2000 is before 0 - read portmidi doc -
 but play well on Suse *)
 val notes = [
 	     (0x90,67,100,0,1000),
@@ -179,14 +196,14 @@ val notes'= Array.fromList notes;
 
 val notes2'= Array.fromList notes2;
 
-(*  latency > 0 *)
+(*  latency > 0 for use  timestamp *)
 val err = openOutput out_id 100 2;
 
 (* set time 0 before playing 
 I have six messages  but I can play only 4
 *)
 fun play msg_array n =  ( ptStop();ptStart 1; openOutput out_id 100 5;
-			  bigWrite (getStream out_id) msg_array n);
+			  bigWrite out_id msg_array n);
 
 (* don't play msg in time  because the initial list is bad formed : 
 all timestamp should be ordered 
@@ -194,7 +211,7 @@ but it's ok with Open Suse *)
 val res = play notes' 4;
 val res = play notes' 6; 
 
-val res = play notes2' 6; (* notes2 is ordered and play well *)
+val res = play notes2' 6; (* notes2 is ordered and play well on all tested platforms *)
 
 
 (* second solution for good timing  => add  port_time to  timestamp *)
@@ -209,7 +226,7 @@ fun playList notes_list size = let
     val pt_time = ptTime()
     val modified = addPortTime pt_time notes_array
 in
-    bigWrite (getStream out_id) notes_array size
+    bigWrite out_id notes_array size
 end;
 
 (* try *)
@@ -219,7 +236,7 @@ val _ = playList notes2 6;
 
 
 (* 
-join all 
+join all with #ptSleep for serial cacophony 
 *)
 val _ = openOutput out_id 100 2;
 
