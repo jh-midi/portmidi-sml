@@ -24,10 +24,9 @@ fun getLibMidi () = let
     val _ = (OS.FileSys.chDir "libs";my_lib_dir := OS.FileSys.getDir();OS.FileSys.chDir ".." )
 in
     case sys_name  of
-	"CYGWIN" =>  join "portmidi.dll"
-      | "Darwin" =>  join "libportmidi.dylib"
+       "Darwin" =>  join "libportmidi.dylib"
       | "Linux" =>   join "libportmidi.so"
-      | "Windows"  =>  join "portmidi.dll"
+      | "Windows"  =>   "./portmidi.dll"
       | _ => "inconnu"
 end
 
