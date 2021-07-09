@@ -7,6 +7,7 @@
   this is an example for using read1 and write1 added to lib interface for realtime input-output
 * portmidi libs are provided for 64bits : tested on Arch Linux, openSUSE Leap 15.3, Mac Catalina and Windows10 
 * *Note : on Ubuntu Studio, timestamp don't work.*
-## Windows users : before using portmidi you have to set portmidi.dll executable => see Wiki
+### Windows users : before using portmidi you have to set portmidi.dll executable => see Wiki
 * Click [Wiki](https://github.com/jh-midi/portmidi-sml/wiki) : this is help for installing PolyML on Windows allowing compiling.
+
 
