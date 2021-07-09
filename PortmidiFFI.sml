@@ -26,7 +26,7 @@ in
     case sys_name  of
        "Darwin" =>  join "libportmidi.dylib"
       | "Linux" =>   join "libportmidi.so"
-      | "Windows"  =>   "./portmidi.dll"
+      | "Windows"  =>  join "portmidi.dll"
       | _ => "inconnu"
 end
 
