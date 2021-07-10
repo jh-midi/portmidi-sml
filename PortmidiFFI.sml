@@ -83,7 +83,7 @@ val PmEvent = cStruct2 (cInt32,cInt32) (* mirror of PmEvent C structure *)
 (* cOptionPtr is used here because this function can return  NULL pointer *)		    
 val Pm_GetDeviceInfo  = buildCall1  ((getSymbol libPortmidi "Pm_GetDeviceInfo"), cInt32 , cOptionPtr(PmDeviceInfo))
 
-val Pm_CountDevices = buildCall0 ((getSymbol libPortmidi "Pm_CountDevices"), (), cInt32) ()
+val Pm_CountDevices = buildCall0 ((getSymbol libPortmidi "Pm_CountDevices"), (), cInt32) (*JH*)
 
 				 
 val pm_OpenOutput =  buildCall7 ((getSymbol libPortmidi "Pm_OpenOutput"),

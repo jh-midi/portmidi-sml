@@ -44,10 +44,14 @@ fun getDeviceInfo deviceID = let
 end
 
 
-fun countDevices () = Pm_CountDevices
+(* 
+here are vals to be evalued at run time
+then don't convert to function
+*)
+val countDevices = Pm_CountDevices
 
-fun initialize () =  Pm_Initialize () 
-fun terminate () =  Pm_Terminate  ()
+val initialize  =  Pm_Initialize 
+val terminate  =  Pm_Terminate 
 
 (* not tested because I don't know how to have host error *)
 fun hasHostError stream = (Pm_HasHostError stream) = 1
@@ -96,6 +100,7 @@ fun close id = (pmClose ( getStream id ); setStreamPtr id stream_void;true)
     
 
 fun listDevices () = let
+    val _ = initialize ()
     val count = countDevices ()
     val iota = List.tabulate (count,fn x =>x)
 in
