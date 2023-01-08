@@ -39,5 +39,9 @@
 * but you can use this library for filtering midi event create music,send sysex etc ...
 * you have to use https://www.tobias-erichsen.de/software/loopmidi.html or another driver with windows
 * Click [Windows Cygwin](https://github.com/jh-midi/portmidi-sml/blob/main/Windows_Cygwin.md) : this is help for installing PolyML on Windows allowing compiling.
-
+# installing on Mac
+C'est pareil que pour Linux, mais je n'ai pu compiler que pour la version Intel.
+* la création des ports virtuels fonctionne mais je n'ai pu ouvrir que les outputs et pas toujours.
+* cette partie n'est pas fiable, il vaut mieux utiliser le gestionnaire IAC.
+* pour le reste ça marche bien.
 
