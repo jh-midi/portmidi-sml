@@ -17,18 +17,18 @@
 * ./configure
 * make
 * sudo make install
-* you are ready for portmidi-sml2
+* you are ready for portmidi-sml
 # learn sml language
 * if you don't know sml language read the book https://www.cl.cam.ac.uk/~lp15/MLbook/
 * It is a gem for learning to programming you have also solutions for exercices.
 
-# installing portmidi-sml2 and compile virtual port
-* download https://github.com/jh-midi/portmidi-sml2/archive/refs/heads/main.zip
+# installing portmidi-sml and compile virtual port
+* download https://github.com/jh-midi/portmidi-sml/archive/refs/heads/main.zip
 * copy this file to your home directory
 * unzip the file : unzip main.zip
 
  # create your virtual midi port (no need to be a programmer)
-* cd portmidi-sml2-main
+* cd portmidi-sml-main
 * polyc virt.sml -o virtual-portmidi (compile the program )
 * now you can create virtual midi port : ./virtual-portmidi diato-port 
 * you can create your in-out named ports : ./virtual-portmidi my-midi-port 
