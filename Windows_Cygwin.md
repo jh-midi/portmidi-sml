@@ -13,16 +13,16 @@ WARNING :  don't choose mingwin64 ; this compiler don't work well for compiling 
 
 * download the PolyML [latest release](https://github.com/polyml/polyml/releases) :\
 WARNING : don't clone the repository it is not the stable version and don't compile on windows.\
-here I use v5.8.2.tar.gz
+here I use v5.9.tar.gz
 
 untar it using the **cywin64 Terminal**
 
 
-` $ tar xvf polyml-5.8.2.tar.gz`
+` $ tar xvf polyml-5.9.tar.gz`
 
 then
 
-` $ cd polyml-5.8.2`\
+` $ cd polyml-5.9`\
 ` $ ./configure`\
 ` $ make`\
 ` $ make compiler`\
@@ -32,7 +32,7 @@ and verify
 
 * ` $ poly `
 
-Poly/ML 5.8.2 Release
+Poly/ML 5.9 Release
 
 `> "Hello!";`
 
@@ -84,7 +84,7 @@ And run it :
 * _with small latency=2 fixed velocity=100 :_\
 `$ ./toChan1 "ATM SQ" "Microsoft GS Wavetable Synth" 100 2`
 
-**with [loopMidi](https://www.tobias-erichsen.de/software/loopmidi.html) you can use Asio then latency is ok**
+**with [loopMidi](https://www.tobias-erichsen.de/software/loopmidi.html) you can use Asio in your Daw then latency is ok**
 
 `$ ./toChan1 "ATM SQ" "loopMIDI Port"`
 
