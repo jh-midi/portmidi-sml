@@ -9,9 +9,6 @@ HERE it is a quick getting started by experiment with portTime.
 
 STEP BY STEP : copy/paste the following lines which endswith ';' at PolyML prompt
 
-you can select by block also but you can get cacophony
-
-
 *)
 
 
@@ -39,9 +36,23 @@ ptTime();
 ptSleep 2000;
 
 
+(* new on linux virtual port return the new id of virtual device *)
+val jojo = createVirtualOutput "jojo"; 
+val jiji = createVirtualInput "jiji";
+(* on windows you get an error code *)
+getErrorText jojo;
+(* return => val it = "PortMidi: Function is not implemented": string 
+and yes portmidi can't create virtual port on windows *)
+
+deleteVirtualDevice jojo;
+deleteVirtualDevice jiji;
+
+
+
+
 (* now look at the devices *)
 				  
-val res = showDevices();
+showDevices();
 
 (* 
 here on  Mac :
@@ -75,13 +86,9 @@ Surge (fantastic synth with microtonal possibilities)
 https://surge-synthesizer.github.io
 
 *)
-(* new on linux virtual port return the new id of virtual device*)
-val jojo = createVirtualOutput "jojo"; 
-val jiji = createVirtualInput "jiji";
-(* on windows you get an error code *)
-val err =  getErrorText jojo;
-(* return => val it = "PortMidi: Function is not implemented": string 
-and yes portmidi can't create virtual port on windows *)
+
+(* from de devices list get the correct number for output device 
+here I put 0 *)
 val out_id =0;
 
 (*
@@ -97,15 +104,15 @@ as we can only use device Id
 (* open out Kontakt 
 err = 0 
 => success *)
-val err = openOutput out_id 100 2;
+openOutput out_id 100 2;
 
 (* first note *)
 val c4 = message (144,60,100); (* note on *)
 val c4' = message (0x80,60,0); (* note off *)
 
-val err = writeShort out_id 0 c4;
+writeShort out_id 0 c4;
 
-val err2 = writeShort out_id 0 c4';
+writeShort out_id 0 c4';
 
 (* we need array buffer for writing block of messages to device *)
 (* filling output buffer *)
@@ -120,18 +127,18 @@ val notes_o = [(message(0x90,60,100),0),
 val notes_o' = Array.fromList notes_o;
 
 (* latency > 0 here : 2 *)
-val err = openOutput out_id 100 2;
+openOutput out_id 100 2;
 
 (* write buffer *)
-val error = write out_id notes_o' 6;
+write out_id notes_o' 6;
 
 (*
 don't ear expecting notes because  0 and 1000 ms timestamps for note on
 are in the past vs portTime on Suse only first note is played then
 I stop it by 
-val err2 = writeShort 0 0 c4';
+writeShort 0 0 c4';
 *)
-val err2 = writeShort 0 0 c4';
+writeShort 0 0 c4';
 (* look at clock *)
 val t = ptTime();
 (* => val t = 333921: int 
@@ -145,9 +152,9 @@ I have to reset the clock to 0 before playing and put a small latency to be in t
 fun playo n =  ( ptStop();ptStart 1; openOutput out_id 100 2; write out_id notes_o' n);
 
 (* play 1 note = 2 events 1st on and  2nd off *)
-val erO = playo 2;
+ playo 2;
 (* then play 6 events *)
-val erO = playo 6;
+ playo 6;
 
 (* another solution for being in time is to add ptTime() to each timestamp of notes list 
 without touching clock or already opened device 
@@ -164,7 +171,7 @@ in
     write out_id  notes_array 6
 end;
 
-val erpl_o = playList_o notes_o (ptTime());
+playList_o notes_o (ptTime());
 
 (* my addon to portmidi playing with bigbuffer JH *)
 (* one tuple for message + timestamp
@@ -204,7 +211,7 @@ val notes'= Array.fromList notes;
 val notes2'= Array.fromList notes2;
 
 (*  latency > 0 for use  timestamp *)
-val err = openOutput out_id 100 2;
+openOutput out_id 100 2;
 
 (* set time 0 before playing 
 I have six messages  but I can play only 4
