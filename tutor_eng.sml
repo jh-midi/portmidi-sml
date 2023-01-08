@@ -134,18 +134,15 @@ write out_id notes_o' 6;
 
 (*
 don't ear expecting notes because  0 and 1000 ms timestamps for note on
-are in the past vs portTime on Suse only first note is played then
-I stop it by 
-writeShort 0 0 c4';
+are in the past vs portTime 
 *)
-writeShort 0 0 c4';
 (* look at clock *)
-val t = ptTime();
-(* => val t = 333921: int 
+ ptTime();
+(* => val it = 84314: int
 1000 is legacy
 
 I have to reset the clock to 0 before playing and put a small latency to be in time.
-=> write a small fun
+=> write a small function
 
 *)
 
@@ -200,8 +197,8 @@ val notes = [
 val notes2 = [(0x90,60,100,0,0),
 	      (0x80,60,0,0,980),
 	     (0x90,67,100,0,1000),
-	     (0x90,64,100,0,1000),
-	      (0x80,67,0,0,2000),
+	     (0x80,64,100,0,2000),
+	      (0x90,67,0,0,1000),
 	      (0x80,64,0,0,2000)
 	    ];
 
@@ -222,10 +219,10 @@ fun play msg_array n =  ( ptStop();ptStart 1; openOutput out_id 100 5;
 (* don't play msg in time  because the initial list is bad formed : 
 all timestamp should be ordered 
 but it's ok with Open Suse *)
-val res = play notes' 4;
-val res = play notes' 6; 
+ play notes' 4;
+ play notes' 6; 
 
-val res = play notes2' 6; (* notes2 is ordered and play well on all tested platforms *)
+ play notes2' 6; (* notes2 is ordered and play well on all tested platforms *)
 
 
 (* second solution for good timing  => add  port_time to  timestamp *)
@@ -243,32 +240,35 @@ in
     bigWrite out_id notes_array size
 end;
 
-(* try *)
-val _ = playList notes 6;
+(* reinitialize out device for all notes off *)
+fun gout () = openOutput out_id 100 2;
 
-val _ = playList notes2 6;
+(* try *)
+ playList notes 6;
+
+ playList notes2 6;
 
 
 (* 
 join all with #ptSleep for serial cacophony 
 *)
-val _ = openOutput out_id 100 2;
+
 
 fun play3 () =  (playList notes2 2 ;ptSleep 1000;playList notes2 4 ;ptSleep 1500;playList notes2 6);
-val _ =play3();
+play3();
 
 fun playPlus () = (playo 2; ptSleep 1000; playo 2; ptSleep 1000; playo 4 ;ptSleep 2000;playo 6);
-val _ = playPlus();
+ playPlus();
 
 (* à vous de jouer ! *)
 
 
 (* ERRORS *)
 (* if you get error use - getErrorText errnum *)
-val err0 = openOutput 0 100 2;
-(* => val err0 = ~9999: int *)
+openOutput 0 100 2;
+(* => it = ~9999: int *)
 
-getErrorText err0;
+getErrorText it;
 (*
 val it = "PortMidi: `Invalid device ID'": string
 surely because  output=false
