@@ -254,7 +254,7 @@ join all with #ptSleep for serial cacophony
 *)
 
 
-fun play3 () =  (playList notes2 2 ;ptSleep 1000;playList notes2 4 ;ptSleep 1500;playList notes2 6);
+fun play3 () =  (playList notes2 2 ;ptSleep 1000;playList notes2 6 ;ptSleep 1500;playList notes2 6);
 play3();
 
 fun playPlus () = (playo 2; ptSleep 1000; playo 2; ptSleep 1000; playo 4 ;ptSleep 2000;playo 6);
