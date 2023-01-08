@@ -12,8 +12,7 @@ open Foreign
  
 (* 
 selectionned libraries are in dir ./libs
-these libs are tested on Windows, Arch Linux and Suse 
-I tested Ubuntu Studio but abandon it because with portmidi it don't recognize timestamp.
+these libs are tested on Windows and Debian testing
 For PolyML the better is to compile it yourself 
 *)
 fun getLibMidi () = let
@@ -89,6 +88,21 @@ val Pm_CountDevices = buildCall0 ((getSymbol libPortmidi "Pm_CountDevices"), (),
 val pm_OpenOutput =  buildCall7 ((getSymbol libPortmidi "Pm_OpenOutput"),
 				 (cStar PortMidiStream, cInt32,cPointer,cInt32,cPointer,cPointer,cInt32), cInt32)
 
+
+
+(*  PmError Pm_CreateVirtualInput(const char *name,
+                                       const char *interf,
+                                       void *deviceInfo); *)
+val Pm_CreateVirtualInput =  buildCall3 ((getSymbol libPortmidi "Pm_CreateVirtualInput"),
+					 ( cString, cPointer,  cPointer ),cInt32)
+
+val Pm_CreateVirtualOutput =  buildCall3 ((getSymbol libPortmidi "Pm_CreateVirtualOutput"),
+			  ( cString, cPointer,  cPointer ),cInt32)					
+(*
+PMEXPORT PmError Pm_DeleteVirtualDevice(PmDeviceID device);
+*)
+val Pm_DeleteVirtualDevice = buildCall1 ((getSymbol libPortmidi "Pm_DeleteVirtualDevice"), cInt, cInt)
+					 
 val pm_OpenInput =  buildCall6 ((getSymbol libPortmidi "Pm_OpenInput"),
 				( cStar PortMidiStream, cInt32,cPointer,cInt32,cPointer,cPointer), cInt32)
 			       
@@ -137,7 +151,7 @@ fun sizeof obj = let
 in
     sizeStruct
 end
-		
+		        (* status, data1, data2,data3,timestamp *)
 val  Big_Event = cStruct5 (cUint8,cUint8,cUint8,cUint8,cInt32) 
 
 val big_Read = buildCall3 ((getSymbol libPortmidi "Pm_Read"),

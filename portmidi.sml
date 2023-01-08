@@ -75,12 +75,13 @@ this array of stream pointers is the register for retrieving the infos for devic
  for open close and get portmidi  stream at one place.
 With that we can live in peace with the pointers, because we only use devices Id
  *)
+(* type PmStream =  Memory.voidStar ref *)
 type PmStream =  Memory.voidStar ref
 				 
 val stream_void = ref Memory.null
 
-		      
-val PM_STREAMS = Array.array (countDevices(), stream_void)
+val STREAMS_COUNT = 32 (* allow 32  input output *)
+val PM_STREAMS =  Array.array(STREAMS_COUNT, stream_void)
 
 (* PortMidiStream pointer of pointer *)
 fun getStreamPtr id = Array.sub (PM_STREAMS,id)
@@ -136,7 +137,15 @@ fun getDeviceInputId name = List.hd (getDeviceId name #input)
 
 fun getDeviceOutputId name = List.hd (getDeviceId name #output)
 
+(* return device id *)
+fun createVirtualOutput name  = 
+  Pm_CreateVirtualOutput (name, Memory.null, Memory.null)
+   				
+fun createVirtualInput name  = 
+   Pm_CreateVirtualInput (name, Memory.null, Memory.null) 
+			
 
+fun deleteVirtualDevice id = (close id; Pm_DeleteVirtualDevice(id))
 
 
 (* if latency > 0, we need a time reference. If none is provided,

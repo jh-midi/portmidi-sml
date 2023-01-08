@@ -75,6 +75,10 @@ Surge (fantastic synth with microtonal possibilities)
 https://surge-synthesizer.github.io
 
 *)
+(* new on linux virtual port return the new id of virtual device*)
+val jojo = createVirtualOutput "jojo" "ALSA"; 
+val jiji = createVirtualInput "jiji" "ALSA";
+
 val out_id =0;
 
 (*
