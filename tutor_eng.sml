@@ -76,9 +76,12 @@ https://surge-synthesizer.github.io
 
 *)
 (* new on linux virtual port return the new id of virtual device*)
-val jojo = createVirtualOutput "jojo" "ALSA"; 
-val jiji = createVirtualInput "jiji" "ALSA";
-
+val jojo = createVirtualOutput "jojo"; 
+val jiji = createVirtualInput "jiji";
+(* on windows you get an error code *)
+val err =  getErrorText jojo;
+(* return => val it = "PortMidi: Function is not implemented": string 
+and yes portmidi can't create virtual port on windows *)
 val out_id =0;
 
 (*
