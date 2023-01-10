@@ -80,16 +80,17 @@ type PmStream =  Memory.voidStar ref
 				 
 val stream_void = ref Memory.null
 
-val STREAMS_COUNT = 32 (* allow 32  input output *)
-val PM_STREAMS =  Array.array(STREAMS_COUNT, stream_void)
+val STREAMS_COUNT = countDevices()
+(* ref because we can add virtual port midi *)
+val PM_STREAMS = ref ( Vector.tabulate(STREAMS_COUNT, fn x => ref Memory.null))
 
 (* PortMidiStream pointer of pointer *)
-fun getStreamPtr id = Array.sub (PM_STREAMS,id)
+fun getStreamPtr id = Vector.sub (!PM_STREAMS,id)
 
 (* PortMidiStream working address *)
 fun getStream id = (! (getStreamPtr id))
 			  
-fun setStreamPtr id (stream : PmStream) = Array.update (PM_STREAMS,id,stream)
+fun setStreamPtr id (stream : PmStream) = Vector.update ( (!PM_STREAMS),id,stream)
 
 (*****************************************************)		   
 (*  pmClose pointer *)
@@ -97,7 +98,7 @@ fun pmClose streamPtr = Pm_Close streamPtr
 
 (* for use with openOutput en openInput 
 close stream and set it to *void  *)
-fun close id = (pmClose ( getStream id ); setStreamPtr id stream_void;true)
+fun close id = (pmClose ( getStream id ); setStreamPtr id (ref Memory.null) ;true)
     
 
 fun listDevices () = let
@@ -137,13 +138,31 @@ fun getDeviceInputId name = List.hd (getDeviceId name #input)
 
 fun getDeviceOutputId name = List.hd (getDeviceId name #output)
 
+(* add pointer in pointers vector if needed *)
+fun updateStreamPointers id =
+    if  Vector.length (!PM_STREAMS) <=id
+    then
+	let val nouveau = ref (Vector.fromList[ref Memory.null])
+	in
+	    PM_STREAMS :=  Vector.concat [(!PM_STREAMS), (!nouveau)]
+	end
+    else ()
+		       
+				     
 (* return device id *)
 fun createVirtualOutput name  = 
-  Pm_CreateVirtualOutput (name, Memory.null, Memory.null)
+    let val id = Pm_CreateVirtualOutput (name, Memory.null, Memory.null)
+    in
+	updateStreamPointers id;
+	id
+    end
    				
 fun createVirtualInput name  = 
-   Pm_CreateVirtualInput (name, Memory.null, Memory.null) 
-			
+   let val id = Pm_CreateVirtualInput (name, Memory.null, Memory.null) 
+   in
+       updateStreamPointers id;
+       id
+   end		
 
 fun deleteVirtualDevice id = (close id; Pm_DeleteVirtualDevice(id))
 
@@ -186,7 +205,6 @@ writeShort  4 0 c3';
 
 
 *)
-
 					    
 fun openInput id buffer_size = let 
     val stream = getStreamPtr id
