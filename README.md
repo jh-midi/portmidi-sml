@@ -23,6 +23,8 @@
 * It is a gem for learning to programming you have also solutions for exercices.
 
 # installing portmidi-sml and compile virtual port
+* I provide already compiled portmidi dynamic library for facility, but if this don't work for you,
+you have to compile portmidi yourself and modify the function "getLibMidi()" in the file PortmidiFFI.sml 
 * download https://github.com/jh-midi/portmidi-sml/archive/refs/heads/main.zip
 * copy this file to your home directory
 * unzip the file : unzip main.zip
