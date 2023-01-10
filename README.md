@@ -40,6 +40,6 @@
 * you have to use https://www.tobias-erichsen.de/software/loopmidi.html or another driver with windows
 * Click [Windows Cygwin](https://github.com/jh-midi/portmidi-sml/blob/main/Windows_Cygwin.md) : this is help for installing PolyML on Windows allowing compiling.
 # installing on Mac
-C'est pareil que pour Linux, mais je n'ai pu compiler que pour la version Intel.
-Il suffit de modifier PortmidiFFI.sml pour rajouter ce qu'il faut pour M1 et M2.
+It's the same as for Linux, but I was only able to compile for the Intel version. (Catalina)
+Just modify PortmidiFFI.sml to add what is needed for M1 and M2.
 
