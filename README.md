@@ -1,5 +1,5 @@
 # portmidi 2.0
-* portmidi for PolyML with virtual ports, all Portmidi functionalities are at your disposal
+* portmidi for PolyML with virtual ports, all Portmidi functionalities are at your disposal except callback function
 * *You can use Portmidi without worry of pointers : just use device id or name*
 * please read tutor_eng.sml and execute lines step by step for getting started
 * use modifier.sml to transform MIDI message from input to output (Presonus Atom SQ -only one channel- )
