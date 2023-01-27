@@ -20,11 +20,11 @@
 * you are ready for portmidi-sml
 # learn sml language
 * if you don't know sml language read the book https://www.cl.cam.ac.uk/~lp15/MLbook/
-* It is a gem for learning to programming you have also solutions for exercices.
+* Book with solutions of exercices.
 
 # installing portmidi-sml and compile virtual port
 * I provide already compiled portmidi dynamic library for facility, but if this don't work for you,
-you have to compile portmidi yourself and modify the function "getLibMidi()" in the file PortmidiFFI.sml 
+you should compile portmidi yourself and modify the function "getLibMidi()" in the file PortmidiFFI.sml 
 * download https://github.com/jh-midi/portmidi-sml/archive/refs/heads/main.zip
 * copy this file to your home directory
 * unzip the file : unzip main.zip
@@ -39,7 +39,7 @@ you have to compile portmidi yourself and modify the function "getLibMidi()" in 
 # installing on windows
 * NB you can't create virtual midi port on windows
 * but you can use this library for filtering midi event create music,send sysex etc ...
-* you have to use https://www.tobias-erichsen.de/software/loopmidi.html or another driver with windows
+* https://www.tobias-erichsen.de/software/loopmidi.html or another driver work well with windows
 * Click [Windows Cygwin](https://github.com/jh-midi/portmidi-sml/blob/main/Windows_Cygwin.md) : this is help for installing PolyML on Windows allowing compiling.
 # installing on Mac
 It's the same as for Linux, but I was only able to compile for the Intel version (Catalina).
