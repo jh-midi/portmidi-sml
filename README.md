@@ -19,6 +19,7 @@
 * sudo make install
 * you are ready for portmidi-sml
 # learn sml language
+* a short tour https://openuniversity.github.io/PL-236319-Spr-2024/Material/Tutorials/sml/introduction.html
 * if you don't know sml language read the book https://www.cl.cam.ac.uk/~lp15/MLbook/
 * Book with solutions of exercices.
 
