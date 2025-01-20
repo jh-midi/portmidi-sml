@@ -6,7 +6,7 @@
 * create virtual "my-diato" midi ports for use with Ardour, Tracktion MuseScsore ...
 * and use diato keyboard for entering, recording your music on Linux.
 * these are examples for using read1 and write1 added to lib interface for realtime input-output
-* portmidi libs are provided for 64bits : tested on Debian Linux, Mac Catalina and Windows 10 
+* portmidi libs are provided for 64bits : tested on Debian Linux, Mac Catalina and Windows 11  (get a new version of these libs for Linux and OSX and install them in the libs directory ; the windows dll provided here is the new version)
 * compiled from https://github.com/PortMidi/portmidi 
 * read the portmidi doc at https://portmidi.github.io/portmidi_docs/
 # Installing PolyML
